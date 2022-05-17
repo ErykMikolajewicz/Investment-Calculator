@@ -84,7 +84,7 @@ class DepositWidget(QWidget):
         layout.addWidget(self.capitalInput, 1, 0)
         layout.addWidget(self.interestRateLabel, 2, 0)
         layout.addWidget(self.interestRateInput, 3, 0)
-        layout.addWidget(self.savingPeriodLabel, 0, 1, 1, 4, Qt.AlignVCenter | Qt.AlignHCenter)
+        layout.addWidget(self.savingPeriodLabel, 0, 1, 1, 4, Qt.AlignHCenter)
         layout.addWidget(self.startTimeLabel, 1, 1, Qt.AlignRight)
         layout.addWidget(self.saving_period_start, 1, 2, Qt.AlignLeft)
         layout.addWidget(self.endTimeLabel, 1, 3, Qt.AlignRight)
@@ -128,10 +128,11 @@ class DepositWidget(QWidget):
                                 lambda: start_date.daysInMonth() + 1 - start_date.day(),
                                 lambda: start_date.daysTo(start_date.addYears(1)),
                                 lambda: start_date.daysTo(end_date)]
-        def round_up(number, decimals = 2):
+
+        def round_up(number, decimals=2):
             decimals = 10**-decimals
             answer = number // decimals
-            if (number/decimals) == answer: # to don't round up 100.01 to 100.02 for example
+            if (number/decimals) == answer:  # to don't round up 100.01 to 100.02 for example
                 return answer*decimals
             answer = answer * decimals + decimals
             return answer

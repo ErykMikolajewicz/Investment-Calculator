@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QSizePolicy
 from PySide6.QtGui import QPalette, QColor
 from PySide6.QtCore import Qt
 
@@ -8,19 +8,34 @@ from BondsWidget import BondsWidget
 from StocksWidget import StocksWidget
 
 
-class MainWindow(QMainWindow):
+class InvestmentCalculator(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Investment Calculator")
         self.language = "ENG"
         self.mode = "dark"
         self.mode_dict = {"dark": (53, Qt.white), "light": (240, Qt.black)}
-        self.main_widget_dict = {"Deposits": DepositWidget,
-                                 "Bonds": BondsWidget,
-                                 "Stocks": StocksWidget}
-        self.setWindowTitle("Investment Calculator")
         self.setMenuBar(Menubar(self))
-        self.setCentralWidget(DepositWidget(self))
+        self.init_stack_with_main_widgets()
         self.set_mode()
+
+    # size hints don't work correct in stackWidget, so function have a bit sophisticated solution of this problem
+    def init_stack_with_main_widgets(self):
+        self.stackWidget = QStackedWidget(self)
+        self.stackWidget.language = self.language
+        current_geometry = self.geometry()
+        x_coordinate = current_geometry.x()
+        y_coordinate = current_geometry.y()
+        self.setCentralWidget(self.stackWidget)
+        self.stackWidget.addWidget(DepositWidget(self))
+        initial_widget_size = self.sizeHint()
+        initial_widget_width = initial_widget_size.width()
+        initial_widget_height = initial_widget_size.height()
+        self.setGeometry(x_coordinate, y_coordinate, initial_widget_width, initial_widget_height)
+        self.stackWidget.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.stackWidget.addWidget(BondsWidget(self))
+        self.stackWidget.addWidget(StocksWidget(self))
+
 
     def set_mode(self):
         # color values are in rgb from 0 to 255, all colors 0 - black, all 255 - white
@@ -39,28 +54,33 @@ class MainWindow(QMainWindow):
         palette.setColor(QPalette.ButtonText, text_color)
         self.setPalette(palette)
 
-    def change_main_widget(self, widget_name):
-        main_widget = self.main_widget_dict[widget_name](self)
-        self.setCentralWidget(main_widget)
-        self.setFixedSize(0, 0)
+    def change_main_widget(self, widget_index):
+        self.stackWidget.setCurrentWidget(self.stackWidget.widget(widget_index))
+        current_geometry = self.geometry()
+        x_coordinate = current_geometry.x()
+        y_coordinate = current_geometry.y()
+        main_widget_size = self.stackWidget.currentWidget().sizeHint()
+        other_widget_size = self.sizeHint()
+        new_widget_width = main_widget_size.width() + other_widget_size.width()
+        new_widget_height = main_widget_size.height() + other_widget_size.height()
+        self.setGeometry(x_coordinate, y_coordinate, new_widget_width, new_widget_height)
 
     def change_all_widget_font(self, font):
         self.setFont(font)
 
     def change_all_widget_language(self, language):
         self.language = language
-        children_list = self.children()
-        for children in children_list:
-            try:
-                children.set_language()
-            except AttributeError:
-                continue
+        self.stackWidget.language = self.language
+        number_of_main_widgets = self.stackWidget.count()
+        for widget_number in range(number_of_main_widgets):
+            widget = self.stackWidget.widget(widget_number)
+            widget.set_language()
 
 
 def main():
     app = QApplication([])
     app.setStyle("Fusion")
-    window = MainWindow()
+    window = InvestmentCalculator()
     window.show()
     app.exec()
 

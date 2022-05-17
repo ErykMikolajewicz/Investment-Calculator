@@ -5,14 +5,17 @@ class Menubar(QMenuBar):
     def __init__(self, parent):
         super().__init__(parent)
         self.deposit_text = {"ENG": "Deposits", "PL": "Lokaty"}
+        deposit_index = 0
         self.depositMenu = self.addAction(self.deposit_text[parent.language],
-                                          lambda: self.parent().change_main_widget(self.deposit_text["ENG"]))
+                                          lambda: self.parent().change_main_widget(deposit_index))
         self.bonds_text = {"ENG": "Bonds", "PL": "Obligacje"}
+        bonds_index = 1
         self.bondsMenu = self.addAction(self.bonds_text[parent.language],
-                                        lambda: self.parent().change_main_widget(self.bonds_text["ENG"]))
+                                        lambda: self.parent().change_main_widget(bonds_index))
         self.stocks_text = {"ENG": "Stocks", "PL": "Akcje"}
+        stocks_index = 2
         self.stocksMenu = self.addAction(self.stocks_text[parent.language],
-                                         lambda: self.parent().change_main_widget(self.stocks_text["ENG"]))
+                                         lambda: self.parent().change_main_widget(stocks_index))
         self.settings_text = {"ENG": "Settings", "PL" : "Ustawienia"}
         self.settingsMenu = self.addMenu(self.settings_text[parent.language])
         self.change_mode_text = {"dark": "light", "light": "dark"}
