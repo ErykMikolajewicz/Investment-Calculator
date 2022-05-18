@@ -14,7 +14,7 @@ DepositWidget.py - Class with widget to compute yield from deposit, initial widg
 
 BondsWidget - Class with widget to compute bonds property, how YTM, most extensive now;
 
-StocksWidget - Class to counting properties of asset, yet not implemented.
+StocksWidget - Class to counting properties of asset, only graphical look implemented.
 
 
 Requirements
