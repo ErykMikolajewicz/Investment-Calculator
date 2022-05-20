@@ -1,44 +1,47 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QWidget,
-                               QGridLayout,
-                               QDateEdit,
-                               QDoubleSpinBox,
-                               QLabel,
-                               QComboBox,
-                               QPushButton,
-                               QErrorMessage)
 from datetime import date
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QGridLayout, QDateEdit, QDoubleSpinBox, QLabel
+
+from LanguageWidgets import LLabel, LComboBox, LPushButton, LErrorMessage
 
 
 class DepositWidget(QWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
         self.yield_ = ""
         self.init_widgets_and_text()
         self.init_and_set_layout()
-        self.set_language()
 
     def init_widgets_and_text(self):
-        self.capitalLabelText = {"ENG": "Deposit amount:", "PL": "Kwota lokaty:"}
-        self.capitalLabel = QLabel()
+        self.capitalLabel = LLabel()
+        self.capitalLabel.language_versions = {"ENG": "Deposit amount:",
+                                               "PL": "Kwota lokaty:"}
 
-        self.interestRateLabelText = {"ENG": "Interest rate:", "PL": "Oprocentowanie:"}
-        self.interestRateLabel = QLabel()
+        self.interestRateLabel = LLabel()
+        self.interestRateLabel.language_versions = {"ENG": "Interest rate:",
+                                                    "PL": "Oprocentowanie:"}
 
-        self.capitalizationPeriodLabelText = {"ENG": "Period of capitalization:", "PL": "Okres kapitalizacji:"}
-        self.capitalizationPeriodLabel = QLabel()
+        self.capitalizationPeriodLabel = LLabel()
+        self.capitalizationPeriodLabel.language_versions = {"ENG": "Period of capitalization:",
+                                                            "PL": "Okres kapitalizacji:"}
 
-        self.savingPeriodLabelText = {"ENG": "Saving period:", "PL": "Czas oszczędzania:"}
-        self.savingPeriodLabel = QLabel()
+        self.savingPeriodLabel = LLabel()
+        self.savingPeriodLabel.language_versions = {"ENG": "Saving period:",
+                                                    "PL": "Czas oszczędzania:"}
+        self.savingPeriodLabel.setAlignment(Qt.AlignHCenter)
 
-        self.startTimeLabelText = {"ENG": "for:", "PL": "od:"}
-        self.startTimeLabel = QLabel()
+        self.startTimeLabel = LLabel()
+        self.startTimeLabel.language_versions = {"ENG": "for:",
+                                                 "PL": "od:"}
 
-        self.endTimeLabelText = {"ENG": "to:", "PL": "do:"}
-        self.endTimeLabel = QLabel()
+        self.endTimeLabel = LLabel()
+        self.endTimeLabel.language_versions = {"ENG": "to:",
+                                               "PL": "do:"}
 
-        self.yieldLabelText = {"ENG": "Yield: ", "PL": "Zysk: "}
-        self.yieldLabel = QLabel()
+        self.yieldLabel = LLabel()
+        self.yieldLabel.language_versions = {"ENG": "Yield: ",
+                                             "PL": "Zysk: "}
 
         self.capitalInput = QDoubleSpinBox()
         self.capitalInput.setMaximum(10 ** 9)
@@ -52,16 +55,20 @@ class DepositWidget(QWidget):
         self.saving_period_start = QDateEdit(date.today())
         self.saving_period_end = QDateEdit(date.today())
 
-        self.capitalizationPeriodChooseText = {"ENG": ('every day', 'on end of moth', 'year', 'on end of period'),
-                                               "PL": ('codziennie', 'na koniec miesiąca', 'rok', 'na koniec okresu')}
-        self.capitalizationPeriodChoose = QComboBox()
+        self.capitalizationPeriodChoose = LComboBox()
+        self.capitalizationPeriodChoose.language_versions = {"ENG": ('every day', 'on end of moth',
+                                                                     'year', 'on end of period'),
+                                                             "PL": ('codziennie', 'na koniec miesiąca',
+                                                                    'rok', 'na koniec okresu')}
 
-        self.countButtonText = {"ENG": "Count yield!", "PL": "Policz zysk!"}
-        self.countButton = QPushButton()
+        self.countButton = LPushButton()
+        self.countButton.language_versions = {"ENG": "Count yield!",
+                                              "PL": "Policz zysk!"}
         self.countButton.clicked.connect(self.count_yield)
 
-        self.tax_text = {"ENG" : "Tax rate:", "PL" : "Stopa podatkowa:"}
-        self.taxLabel = QLabel()
+        self.taxLabel = LLabel()
+        self.taxLabel.language_versions = {"ENG": "Tax rate:",
+                                           "PL": "Stopa podatkowa:"}
 
         self.taxInput = QDoubleSpinBox()
         self.taxInput.setValue(19)
@@ -69,14 +76,15 @@ class DepositWidget(QWidget):
         self.taxInput.setMinimum(0)
         self.taxInput.setSuffix("%")
 
-        self.payed_tax_text = {"ENG" : "Payed tax:", "PL" : "Zapłacony podatek:"}
-        self.payedTaxLabel = QLabel()
+        self.payedTaxLabel = LLabel()
+        self.payedTaxLabel.language_versions = {"ENG": "Payed tax:",
+                                                "PL": "Zapłacony podatek:"}
 
         self.payedTaxOutputLabel = QLabel()
 
-        self.bad_date_popup_text = {"ENG": "Bad date range!",
-                                    "PL": "Niepoprawny zakre dat!"}
-        self.badDatePopup = QErrorMessage(self)
+        self.badDatePopup = LErrorMessage()
+        self.badDatePopup.language_versions = {"ENG": "Bad date range!",
+                                               "PL": "Niepoprawny zakre dat!"}
 
     def init_and_set_layout(self):
         layout = QGridLayout()
@@ -84,7 +92,7 @@ class DepositWidget(QWidget):
         layout.addWidget(self.capitalInput, 1, 0)
         layout.addWidget(self.interestRateLabel, 2, 0)
         layout.addWidget(self.interestRateInput, 3, 0)
-        layout.addWidget(self.savingPeriodLabel, 0, 1, 1, 4, Qt.AlignHCenter)
+        layout.addWidget(self.savingPeriodLabel, 0, 1, 1, 4)
         layout.addWidget(self.startTimeLabel, 1, 1, Qt.AlignRight)
         layout.addWidget(self.saving_period_start, 1, 2, Qt.AlignLeft)
         layout.addWidget(self.endTimeLabel, 1, 3, Qt.AlignRight)
@@ -97,21 +105,15 @@ class DepositWidget(QWidget):
         layout.addWidget(self.taxInput, 1, 5)
         layout.addWidget(self.payedTaxLabel, 2, 5)
         layout.addWidget(self.payedTaxOutputLabel, 3, 5)
+        layout.setHorizontalSpacing(15)
         self.setLayout(layout)
 
-    def set_language(self):
-        self.capitalLabel.setText(self.capitalLabelText[self.parent().language])
-        self.interestRateLabel.setText(self.interestRateLabelText[self.parent().language])
-        self.capitalizationPeriodLabel.setText(self.capitalizationPeriodLabelText[self.parent().language])
-        self.startTimeLabel.setText(self.startTimeLabelText[self.parent().language])
-        self.endTimeLabel.setText(self.endTimeLabelText[self.parent().language])
-        self.savingPeriodLabel.setText(self.savingPeriodLabelText[self.parent().language])
-        self.capitalizationPeriodChoose.clear()
-        self.capitalizationPeriodChoose.addItems(self.capitalizationPeriodChooseText[self.parent().language])
-        self.countButton.setText(self.countButtonText[self.parent().language])
-        self.yieldLabel.setText(self.yieldLabelText[self.parent().language])
-        self.taxLabel.setText(self.tax_text[self.parent().language])
-        self.payedTaxLabel.setText(self.payed_tax_text[self.parent().language])
+    def set_language(self, language):
+        for child in self.children():
+            try:
+                child.set_language(language)
+            except AttributeError:
+                continue
 
     def count_yield(self):
         self.yield_ = ''
@@ -136,6 +138,7 @@ class DepositWidget(QWidget):
                 return answer*decimals
             answer = answer * decimals + decimals
             return answer
+
         payed_tax = 0
         while start_date < end_date:
             interest_rate_days = variants_saving_list[saving_option]()
@@ -150,6 +153,10 @@ class DepositWidget(QWidget):
                 payed_tax += tax
                 interest -= tax
             capital += interest
+        payed_tax = round(payed_tax, 2)
         self.yield_ = str(round(capital - self.capitalInput.value(), 2))
-        self.yieldLabel.setText(self.yieldLabelText[self.parent().language] + str(self.yield_))
+        text_to_output_label = self.yieldLabel.text()
+        text_to_output_label = text_to_output_label.split(":")
+        text_to_output_label = text_to_output_label[0]
+        self.yieldLabel.setText(text_to_output_label + ": " + str(self.yield_))
         self.payedTaxOutputLabel.setText(str(payed_tax))

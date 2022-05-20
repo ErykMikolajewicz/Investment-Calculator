@@ -1,20 +1,16 @@
-from PySide6.QtWidgets import (QWidget,
-                               QGridLayout,
-                               QLabel,
-                               QDoubleSpinBox,
-                               QDateEdit,
-                               QComboBox,
-                               QErrorMessage)
 from datetime import date
+
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QDoubleSpinBox, QDateEdit
+
+from LanguageWidgets import LLabel, LComboBox, LErrorMessage
 
 
 class BondsWidget(QWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
         self.init_numerical_fields()
         self.init_widgets_and_text()
         self.init_and_set_layout()
-        self.set_language()
         self.count_and_set_values()
 
     def init_numerical_fields(self):
@@ -27,50 +23,60 @@ class BondsWidget(QWidget):
         self.saving_options = (12, 6, 3, 1)
 
     def init_widgets_and_text(self):
-        self.nominal_bond_value_text = {"ENG": "Nominal bond value:", "PL": "Wartość nominalna obligacji:"}
-        self.nominalBondValueLabel = QLabel()
+        self.nominalBondValueLabel = LLabel()
+        self.nominalBondValueLabel.language_versions = {"ENG": "Nominal bond value:",
+                                                        "PL": "Wartość nominalna obligacji:"}
         self.nominalBondValueInput = QDoubleSpinBox()
         self.nominalBondValueInput.setMaximum(10 ** 9)
         self.nominalBondValueInput.setMinimum(0)
         self.nominalBondValueInput.setValue(1000)
         self.nominalBondValueInput.valueChanged.connect(self.count_and_set_values)
 
-        self.interest_rate_text = {"ENG": "Interest rate:", "PL": "Oprocentowanie:"}
-        self.interestRateLabel = QLabel()
+        self.interestRateLabel = LLabel()
+        self.interestRateLabel.language_versions = {"ENG": "Interest rate:",
+                                                    "PL": "Oprocentowanie:"}
         self.interestRateInput = QDoubleSpinBox()
         self.interestRateInput.setValue(2)
         self.interestRateInput.setMaximum(600)
         self.interestRateInput.setSuffix("%")
         self.interestRateInput.valueChanged.connect(self.count_and_set_values)
 
-        self.bond_purchase_value_text = {"ENG": "Bond purchase value:", "PL": "Cena kupna obligacji:"}
-        self.bondPurchaseValueLabel = QLabel()
+        self.bondPurchaseValueLabel = LLabel()
+        self.bondPurchaseValueLabel.language_versions = {"ENG": "Bond purchase value:",
+                                                         "PL": "Cena kupna obligacji:"}
         self.bondPurchaseValueInput = QDoubleSpinBox()
         self.bondPurchaseValueInput.setMaximum(10 ** 9)
         self.bondPurchaseValueInput.setMinimum(0.01)
         self.bondPurchaseValueInput.setValue(1000)
         self.bondPurchaseValueInput.valueChanged.connect(self.count_and_set_values)
 
-        self.current_date_text = {"ENG": "Current date:", "PL": "Obecna data:"}
-        self.currentDateLabel = QLabel()
+        self.currentDateLabel = LLabel()
+        self.currentDateLabel.language_versions = {"ENG": "Current date:",
+                                                   "PL": "Obecna data:"}
         self.purchaseDate = QDateEdit(date.today())
         self.purchaseDate.dateChanged.connect(self.count_and_set_values)
 
-        self.redemption_date_text = {"ENG": "Redemption date:", "PL": "Data wykupu:"}
-        self.redemptionDateLabel = QLabel()
+        self.redemptionDateLabel = LLabel()
+        self.redemptionDateLabel.language_versions = {"ENG": "Redemption date:",
+                                                      "PL": "Data wykupu:"}
         redemption_date = self.purchaseDate.date().addYears(10)
         self.redemptionDate = QDateEdit(redemption_date)
         self.redemptionDate.dateChanged.connect(self.count_and_set_values)
 
-        self.capitalization_period_text = {"ENG": "capitalization period:", "PL": "Okres kapitalizacji:"}
-        self.capitalizationPeriodLabel = QLabel()
-        self.capitalization_period_choose_text = {"ENG": ('yearly', 'half-yearly', 'quarterly', 'monthly'),
-                                                  "PL": ('rocznie', 'półrocznie', 'kwartalnie', 'miesięcznie')}
-        self.capitalizationPeriodChoose = QComboBox()
+        self.capitalizationPeriodLabel = LLabel()
+        self.capitalizationPeriodLabel.language_versions = {"ENG": "Capitalization period:",
+                                                            "PL": "Okres kapitalizacji:"}
+
+        self.capitalizationPeriodChoose = LComboBox()
+        self.capitalizationPeriodChoose.language_versions = {"ENG": ('yearly', 'half-yearly',
+                                                                     'quarterly', 'monthly'),
+                                                             "PL": ('rocznie', 'półrocznie',
+                                                                    'kwartalnie', 'miesięcznie')}
         self.capitalizationPeriodChoose.currentIndexChanged.connect(self.count_and_set_values)
 
-        self.simple_yield_text = {"ENG": "Simple yield:", "PL": "Prosta stopa zwrotu:"}
-        self.simpleYieldLabel = QLabel()
+        self.simpleYieldLabel = LLabel()
+        self.simpleYieldLabel.language_versions = {"ENG": "Simple yield:",
+                                                   "PL": "Prosta stopa zwrotu:"}
         self.simpleYieldOutputLabel = QLabel()
 
         self.ytmBruttoLabel = QLabel("ytm brutto:")
@@ -82,8 +88,9 @@ class BondsWidget(QWidget):
         self.durationLabel = QLabel("Duration:")
         self.durationOutputLabel = QLabel()
 
-        self.interest_rate_change_text = {"ENG": "Interest rate change:", "PL": "Zmiana stopy procentowej:"}
-        self.interestRateChangeLabel = QLabel()
+        self.interestRateChangeLabel = LLabel()
+        self.interestRateChangeLabel.language_versions = {"ENG": "Interest rate change:",
+                                                          "PL": "Zmiana stopy procentowej:"}
         self.interestRateChangeInput = QDoubleSpinBox()
         self.interestRateChangeInput.setMaximum(600)
         self.interestRateChangeInput.setMinimum(-600)
@@ -91,14 +98,14 @@ class BondsWidget(QWidget):
         self.interestRateChangeInput.setSuffix("%")
         self.interestRateChangeInput.valueChanged.connect(self.count_impact_of_interest_rate_change)
 
-        self.impact_interest_rate_text = {"ENG": "Impact for bond value:",
-                                          "PL": "Wpływ na cenę obligacji:"}
-        self.impactInterestRateLabel = QLabel()
+        self.impactInterestRateLabel = LLabel()
+        self.impactInterestRateLabel.language_versions = {"ENG": "Impact for bond value:",
+                                                          "PL": "Wpływ na cenę obligacji:"}
         self.impactInterestRateOutputLabel = QLabel()
 
-        self.bad_date_popup_text = {"ENG": "Bad date range!",
-                                    "PL": "Niepoprawny zakre dat!"}
-        self.badDatePopup = QErrorMessage(self)
+        self.badDatePopup = LErrorMessage()
+        self.badDatePopup.language_versions = {"ENG": "Bad date range!",
+                                               "PL": "Niepoprawny zakre dat!"}
 
     def init_and_set_layout(self):
         layout = QGridLayout()
@@ -126,20 +133,15 @@ class BondsWidget(QWidget):
         layout.addWidget(self.interestRateChangeInput, 3, 3)
         layout.addWidget(self.impactInterestRateLabel, 4, 3)
         layout.addWidget(self.impactInterestRateOutputLabel, 5, 3)
+        layout.setHorizontalSpacing(15)
         self.setLayout(layout)
 
-    def set_language(self):
-        self.nominalBondValueLabel.setText(self.nominal_bond_value_text[self.parent().language])
-        self.interestRateLabel.setText(self.interest_rate_text[self.parent().language])
-        self.bondPurchaseValueLabel.setText(self.bond_purchase_value_text[self.parent().language])
-        self.currentDateLabel.setText(self.current_date_text[self.parent().language])
-        self.redemptionDateLabel.setText(self.redemption_date_text[self.parent().language])
-        self.capitalizationPeriodLabel.setText(self.capitalization_period_text[self.parent().language])
-        self.capitalizationPeriodChoose.clear()
-        self.capitalizationPeriodChoose.addItems(self.capitalization_period_choose_text[self.parent().language])
-        self.simpleYieldLabel.setText(self.simple_yield_text[self.parent().language])
-        self.interestRateChangeLabel.setText(self.interest_rate_change_text[self.parent().language])
-        self.impactInterestRateLabel.setText(self.impact_interest_rate_text[self.parent().language])
+    def set_language(self, language):
+        for child in self.children():
+            try:
+                child.set_language(language)
+            except AttributeError:
+                continue
 
     def count_and_set_values(self):
         self.count_simple_yield()
@@ -214,6 +216,7 @@ class BondsWidget(QWidget):
         self.duration = round(self.duration, 2)
 
     def count_impact_of_interest_rate_change(self):
-        value_percent_change = -self.duration/(1 + self.ytm/100)*self.interestRateChangeInput.value()
-        value_percent_change = round(value_percent_change, 2)
-        self.impactInterestRateOutputLabel.setText(str(value_percent_change) + "%")
+        bond_value_by_higher_interest = self.count_bond_value_by_ytm(self.ytm + self.interestRateChangeInput.value())
+        price_change = bond_value_by_higher_interest/self.bondPurchaseValueInput.value() - 1
+        price_change = round(price_change*100, 2)
+        self.impactInterestRateOutputLabel.setText(str(price_change) + "%")

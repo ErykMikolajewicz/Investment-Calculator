@@ -16,26 +16,18 @@ class InvestmentCalculator(QMainWindow):
         self.mode = "dark"
         self.mode_dict = {"dark": (53, Qt.white), "light": (240, Qt.black)}
         self.setMenuBar(Menubar(self))
-        self.init_stack_with_main_widgets()
-        self.set_mode()
-
-    # size hints don't work correct in stackWidget, so function have a bit sophisticated solution of this problem
-    def init_stack_with_main_widgets(self):
-        self.stackWidget = QStackedWidget(self)
-        self.stackWidget.language = self.language
-        current_geometry = self.geometry()
-        x_coordinate = current_geometry.x()
-        y_coordinate = current_geometry.y()
+        self.stackWidget = QStackedWidget()
+        self.stackWidget.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)  # stackWidget hints don't work correct
         self.setCentralWidget(self.stackWidget)
-        self.stackWidget.addWidget(DepositWidget(self))
-        initial_widget_size = self.sizeHint()
-        initial_widget_width = initial_widget_size.width()
-        initial_widget_height = initial_widget_size.height()
-        self.setGeometry(x_coordinate, y_coordinate, initial_widget_width, initial_widget_height)
-        self.stackWidget.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.stackWidget.addWidget(BondsWidget(self))
-        self.stackWidget.addWidget(StocksWidget(self))
-
+        self.depositWidget = DepositWidget()
+        self.bondsWidget = BondsWidget()
+        self.stocksWidget = StocksWidget()
+        self.stackWidget.addWidget(self.depositWidget)
+        self.stackWidget.addWidget(self.bondsWidget)
+        self.stackWidget.addWidget(self.stocksWidget)
+        self.set_main_widget(self.stackWidget.currentIndex())
+        self.set_widgets_language(self.language)
+        self.set_mode()
 
     def set_mode(self):
         # color values are in rgb from 0 to 255, all colors 0 - black, all 255 - white
@@ -54,11 +46,11 @@ class InvestmentCalculator(QMainWindow):
         palette.setColor(QPalette.ButtonText, text_color)
         self.setPalette(palette)
 
-    def change_main_widget(self, widget_index):
+    # function also repair not working size hints from stackWidget
+    def set_main_widget(self, widget_index):
         self.stackWidget.setCurrentWidget(self.stackWidget.widget(widget_index))
         current_geometry = self.geometry()
-        x_coordinate = current_geometry.x()
-        y_coordinate = current_geometry.y()
+        x_coordinate, y_coordinate = current_geometry.x(), current_geometry.y()
         main_widget_size = self.stackWidget.currentWidget().sizeHint()
         other_widget_size = self.sizeHint()
         new_widget_width = main_widget_size.width() + other_widget_size.width()
@@ -67,14 +59,16 @@ class InvestmentCalculator(QMainWindow):
 
     def change_all_widget_font(self, font):
         self.setFont(font)
+        self.set_main_widget(self.stackWidget.currentIndex())  # to adjust size font change
 
-    def change_all_widget_language(self, language):
+    def set_widgets_language(self, language):
         self.language = language
-        self.stackWidget.language = self.language
         number_of_main_widgets = self.stackWidget.count()
         for widget_number in range(number_of_main_widgets):
             widget = self.stackWidget.widget(widget_number)
-            widget.set_language()
+            widget.set_language(language)
+        self.menuBar().set_language(language)
+        self.set_main_widget(self.stackWidget.currentIndex())  # to adjust size after language change
 
 
 def main():
